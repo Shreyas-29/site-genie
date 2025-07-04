@@ -154,6 +154,9 @@ const ProjectWrapper = () => {
                 <RightHeader
                     viewMode={rightViewMode}
                     onViewModeChange={setRightViewMode}
+                    url={previewUrl}
+                    onUrlChange={() => {}}
+                    onRefresh={() => {}}
                 />
             }
             rightContent={

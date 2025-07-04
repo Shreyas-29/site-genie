@@ -29,9 +29,9 @@ const useSiteStore = create<WebsiteState>()(
                 html: "<!-- Your generated HTML will appear here -->",
                 css: "/* Your generated CSS will appear here */"
             },
-            
+
             setCurrentFile: (fileName) => set({ currentFile: fileName }),
-            
+
             updateWebsiteData: (html, css) => {
                 set((state) => {
                     const updateFiles = (files: WebsiteFile[]): WebsiteFile[] => {
@@ -48,14 +48,14 @@ const useSiteStore = create<WebsiteState>()(
                             return file;
                         });
                     };
-                    
+
                     return {
                         websiteData: { html, css },
                         files: updateFiles([...state.files])
                     };
                 });
             },
-            
+
             initializeWebsite: (html, css) => {
                 const files: WebsiteFile[] = [
                     {
@@ -68,20 +68,14 @@ const useSiteStore = create<WebsiteState>()(
                                 content: html
                             },
                             {
-                                name: 'styles',
-                                type: 'folder',
-                                children: [
-                                    {
-                                        name: 'styles.css',
-                                        type: 'file',
-                                        content: css
-                                    }
-                                ]
+                                name: 'styles.css',
+                                type: 'file',
+                                content: css
                             }
                         ]
                     }
                 ];
-                
+
                 set({
                     files,
                     currentFile: 'index.html',

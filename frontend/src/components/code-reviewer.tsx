@@ -10,7 +10,7 @@ interface Props {
 
 const CodeViewer = ({ content, language }: Props) => {
     return (
-        <div className="h-full overflow-auto">
+        <div className="h-full overflow-y-auto hide-scrollbar">
             {content ? (
                 <SyntaxHighlighter
                     language={language}

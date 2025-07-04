@@ -28,7 +28,7 @@ const ProjectPannel = ({
                 maxSize={50}
                 className="flex flex-col bg-background border-r border-border"
             >
-                <div className="h-12 flex items-center px-4 border-b border-border">
+                <div className="h-12 flex items-center px-2 border-b border-border">
                     {leftHeader}
                 </div>
                 <div className="flex-1 overflow-auto">
@@ -48,7 +48,7 @@ const ProjectPannel = ({
                 minSize={30}
                 className="flex flex-col bg-background"
             >
-                <div className="h-12 flex items-center px-4 border-b border-border">
+                <div className="h-12 flex items-center px-2 border-b border-border">
                     {rightHeader}
                 </div>
                 <div className="flex-1 overflow-auto">

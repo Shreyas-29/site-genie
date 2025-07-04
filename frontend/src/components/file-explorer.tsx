@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { FileIcon, FolderIcon, ChevronRightIcon, ChevronDownIcon } from "lucide-react";
+import { FileIcon, FolderIcon, ChevronRightIcon, ChevronDownIcon, FileTextIcon } from "lucide-react";
 import { useState } from "react";
 
 export interface FileType {
@@ -24,7 +24,10 @@ const FileItem = ({
     onSelect,
     selectedFile,
 }: FileItemProps) => {
+    
+    console.log(file, selectedFile)
     const isSelected = selectedFile === file.name;
+
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
     const handleClick = () => {
@@ -43,7 +46,7 @@ const FileItem = ({
                     isSelected && "bg-accent"
                 )}
                 style={{
-                    paddingLeft: `${level * 12 + 8}px`,
+                    paddingLeft: `${level * 24 + 8}px`,
                 }}
                 onClick={handleClick}
             >
@@ -57,7 +60,7 @@ const FileItem = ({
                         <FolderIcon className="w-4 h-4 mr-2 text-blue-500" />
                     </>
                 ) : (
-                    <FileIcon className="w-4 h-4 mr-6 text-gray-500" />
+                    <FileIcon className="w-4 h-4 mr-2 text-amber-500" />
                 )}
                 <span className="text-sm truncate">{file.name}</span>
             </div>
