@@ -1,17 +1,20 @@
-'use client';
+"use client";
 
-import { File, Folder, ChevronRight, ChevronDown } from 'lucide-react';
-import { useState } from 'react';
+import { cn } from "@/lib/utils";
+import { FileIcon, FolderIcon, ChevronRightIcon, ChevronDownIcon } from "lucide-react";
+import { useState } from "react";
 
-type FileType = {
+export interface FileType {
     name: string;
-    type: string;
-    children: any;
-};
+    type: 'file' | 'folder';
+    content?: string;
+    children?: FileType[];
+}
 
-interface FileExplorerProps {
-    files: FileType[];
-    onFileSelect: (file: FileType) => void;
+interface FileItemProps {
+    file: FileType;
+    level?: number;
+    onSelect: (file: FileType) => void;
     selectedFile: string;
 }
 
@@ -20,17 +23,12 @@ const FileItem = ({
     level = 0,
     onSelect,
     selectedFile,
-}: {
-    file: FileType;
-    level?: number;
-    onSelect: (file: FileType) => void;
-    selectedFile: string;
-}) => {
-    const [isExpanded, setIsExpanded] = useState(false);
+}: FileItemProps) => {
     const isSelected = selectedFile === file.name;
+    const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
     const handleClick = () => {
-        if (file.type === 'folder') {
+        if (file.type === "folder") {
             setIsExpanded(!isExpanded);
         } else {
             onSelect(file);
@@ -40,42 +38,55 @@ const FileItem = ({
     return (
         <div className="select-none">
             <div
-                className={`flex items-center py-1 px-2 rounded-md cursor-pointer hover:bg-accent ${isSelected ? 'bg-accent' : ''
-                    }`}
-                style={{ paddingLeft: `${level * 16 + 8}px` }}
+                className={cn(
+                    "flex items-center py-1 px-2 rounded-md cursor-pointer hover:bg-accent",
+                    isSelected && "bg-accent"
+                )}
+                style={{
+                    paddingLeft: `${level * 12 + 8}px`,
+                }}
                 onClick={handleClick}
             >
-                {file.type === 'folder' ? (
-                    <span className="flex items-center">
+                {file.type === "folder" ? (
+                    <>
                         {isExpanded ? (
-                            <ChevronDown className="w-4 h-4 mr-1" />
+                            <ChevronDownIcon className="w-4 h-4 mr-1" />
                         ) : (
-                            <ChevronRight className="w-4 h-4 mr-1" />
+                            <ChevronRightIcon className="w-4 h-4 mr-1" />
                         )}
-                        <Folder className="w-4 h-4 text-yellow-500" />
-                    </span>
+                        <FolderIcon className="w-4 h-4 mr-2 text-blue-500" />
+                    </>
                 ) : (
-                    <File className="w-4 h-4 text-blue-500" />
+                    <FileIcon className="w-4 h-4 mr-6 text-gray-500" />
                 )}
-                <span className="ml-2 text-sm">{file.name}</span>
+                <span className="text-sm truncate">{file.name}</span>
             </div>
-            {isExpanded &&
-                file.children?.map((child: any) => (
-                    <FileItem
-                        key={child.name}
-                        file={child}
-                        level={level + 1}
-                        onSelect={onSelect}
-                        selectedFile={selectedFile}
-                    />
-                ))}
+            {file.type === "folder" && isExpanded && file.children && (
+                <div>
+                    {file.children.map((child) => (
+                        <FileItem
+                            key={child.name}
+                            file={child}
+                            level={level + 1}
+                            onSelect={onSelect}
+                            selectedFile={selectedFile}
+                        />
+                    ))}
+                </div>
+            )}
         </div>
     );
 };
 
+interface FileExplorerProps {
+    files: FileType[];
+    onFileSelect: (file: FileType) => void;
+    selectedFile: string;
+}
+
 const FileExplorer = ({ files, onFileSelect, selectedFile }: FileExplorerProps) => {
     return (
-        <div className="h-full overflow-y-auto">
+        <div className="h-full overflow-auto p-2">
             {files.map((file) => (
                 <FileItem
                     key={file.name}

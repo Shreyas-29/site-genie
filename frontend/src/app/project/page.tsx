@@ -1,5 +1,5 @@
+import React from 'react';
 import ProjectWrapper from '@/components/project-wrapper';
-import React from 'react'
 
 const ProjectPage = () => {
     return (

@@ -1,66 +1,32 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { RefreshCw, ExternalLink } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-
-type ViewMode = 'preview' | 'code';
+import { CodeIcon, EyeIcon } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger } from "./ui/tabs";
 
 interface RightHeaderProps {
-    viewMode: ViewMode;
-    onViewModeChange: (mode: ViewMode) => void;
-    url: string;
-    onUrlChange: (url: string) => void;
-    onRefresh: () => void;
+    viewMode: "preview" | "code";
+    onViewModeChange: (mode: "preview" | "code") => void;
 }
 
-const RightHeader = ({
-    viewMode,
-    onViewModeChange,
-    url,
-    onUrlChange,
-    onRefresh,
-}: RightHeaderProps) => {
+const RightHeader = ({ viewMode, onViewModeChange }: RightHeaderProps) => {
     return (
-        <div className="flex items-center justify-between w-full">
-            <div className="flex items-center space-x-1">
-                <Button
-                    variant={viewMode === 'preview' ? 'secondary' : 'ghost'}
-                    size="sm"
-                    onClick={() => onViewModeChange('preview')}
-                >
-                    Preview
-                </Button>
-                <Button
-                    variant={viewMode === 'code' ? 'secondary' : 'ghost'}
-                    size="sm"
-                    onClick={() => onViewModeChange('code')}
-                >
-                    Code
-                </Button>
-            </div>
-
-            <div className="flex items-center space-x-2">
-                <Button variant="ghost" size="icon" onClick={onRefresh}>
-                    <RefreshCw className="h-4 w-4" />
-                </Button>
-                <div className="relative flex items-center">
-                    <Input
-                        value={url}
-                        onChange={(e) => onUrlChange(e.target.value)}
-                        className="h-8 w-64 text-xs"
-                        placeholder="Enter URL"
-                    />
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="absolute right-0 h-6 w-6"
-                        onClick={() => window.open(url, '_blank')}
-                    >
-                        <ExternalLink className="h-3 w-3" />
-                    </Button>
-                </div>
-            </div>
+        <div className="flex items-center justify-between h-10 px-4 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <Tabs
+                value={viewMode}
+                onValueChange={(value) => onViewModeChange(value as "preview" | "code")}
+                className="h-full"
+            >
+                <TabsList className="h-8">
+                    <TabsTrigger value="preview" className="flex items-center gap-1.5 text-xs">
+                        <EyeIcon className="size-3.5" />
+                        <span>Preview</span>
+                    </TabsTrigger>
+                    <TabsTrigger value="code" className="flex items-center gap-1.5 text-xs">
+                        <CodeIcon className="size-3.5" />
+                        <span>Code</span>
+                    </TabsTrigger>
+                </TabsList>
+            </Tabs>
         </div>
     );
 };

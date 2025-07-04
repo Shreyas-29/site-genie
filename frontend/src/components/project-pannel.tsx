@@ -1,10 +1,10 @@
 "use client";
 
-import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels';
-import { GripVertical, GripHorizontal } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";
+import { GripVertical, GripHorizontal } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-interface ProjectLayoutProps {
+interface Props {
     leftHeader: React.ReactNode;
     leftContent: React.ReactNode;
     rightHeader: React.ReactNode;
@@ -18,7 +18,7 @@ const ProjectPannel = ({
     rightHeader,
     rightContent,
     defaultLayout = [30, 70],
-}: ProjectLayoutProps) => {
+}: Props) => {
     return (
         <PanelGroup direction="horizontal" className="h-[calc(100vh-4rem)]">
             {/* Left Panel */}

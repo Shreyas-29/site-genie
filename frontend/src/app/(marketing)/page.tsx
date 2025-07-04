@@ -1,5 +1,5 @@
 import InputWrapper from '@/components/input-wrapper';
-import { StarsIcon } from 'lucide-react';
+import SiteGenerator from '@/components/site-generator';
 import React from 'react'
 
 const HomePage = () => {
@@ -12,7 +12,6 @@ const HomePage = () => {
 
             <div className="flex flex-col items-center mt-28 lg:mt-40 w-full mx-auto max-w-2xl z-20">
                 <div className="text-center w-full">
-                    {/* <StarsIcon className="size-8 mx-auto" /> */}
                     <h2 className="text-3xl lg:text-5xl font-semibold text-center">
                         Build your website in minutes
                     </h2>
@@ -21,7 +20,13 @@ const HomePage = () => {
                     </p>
                 </div>
 
-                <InputWrapper />
+                <SiteGenerator />
+
+                <div className="mt-6 text-center text-sm text-muted-foreground">
+                    <p className="text-balance max-w-md mx-auto">
+                        No signup required. Just describe your website and ship in minutes
+                    </p>
+                </div>
             </div>
         </div>
     )
