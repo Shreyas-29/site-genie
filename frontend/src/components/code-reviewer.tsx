@@ -1,11 +1,9 @@
-"use client";
-
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 interface Props {
     content: string;
-    language: 'html' | 'css' | 'javascript' | 'typescript' | string;
+    language: "html" | "css" | "javascript" | "typescript" | string;
 }
 
 const CodeViewer = ({ content, language }: Props) => {
@@ -17,11 +15,11 @@ const CodeViewer = ({ content, language }: Props) => {
                     style={vscDarkPlus}
                     customStyle={{
                         margin: 0,
-                        padding: '1.5rem',
-                        height: '100%',
-                        background: '#0f172a',
-                        fontSize: '0.875rem',
-                        lineHeight: '1.5',
+                        padding: "1.5rem",
+                        height: "100%",
+                        background: "#0f172a",
+                        fontSize: "0.875rem",
+                        lineHeight: "1.5",
                     }}
                     showLineNumbers
                     wrapLines

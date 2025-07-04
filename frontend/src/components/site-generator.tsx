@@ -4,7 +4,7 @@ import { useState } from "react";
 import InputWrapper from "./input-wrapper";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import useSiteStore from "@/hooks/use-site";
+import { useSiteStore } from "@/hooks/use-site";
 
 const SiteGenerator = () => {
 
@@ -26,21 +26,19 @@ const SiteGenerator = () => {
                 body: JSON.stringify({
                     description: prompt,
                     style: "modern",
-                    color_scheme: "blue"
+                    color_scheme: "blue",
+                    generate_multiple_pages: true,
                 }),
             });
 
             if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.detail || "Failed to generate website");
+                toast.error("Failed to generate website");
+                return;
             }
 
             const data = await response.json();
 
-            useSiteStore.getState().initializeWebsite(
-                data.html || "<div>No HTML content</div>",
-                data.css || "/* No CSS content */"
-            );
+            useSiteStore.getState().initializeWebsite(data.pages);
 
             router.push("/project");
 

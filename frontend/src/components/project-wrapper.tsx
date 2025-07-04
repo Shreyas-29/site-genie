@@ -9,7 +9,7 @@ import RightHeader from "./right-header";
 import Preview from "./preview";
 import CodeViewer from "./code-reviewer";
 import { toast } from "sonner";
-import useSiteStore from "@/hooks/use-site";
+import { useSiteStore } from "@/hooks/use-site";
 
 interface WebsiteData {
     html: string;
@@ -18,7 +18,7 @@ interface WebsiteData {
 
 interface FileType {
     name: string;
-    type: 'file' | 'folder';
+    type: "file" | "folder";
     content?: string;
     children?: FileType[];
 }
@@ -26,77 +26,120 @@ interface FileType {
 const ProjectWrapper = () => {
 
     const {
-        files,
-        currentFile,
-        setCurrentFile,
+        currentPage,
+        pages,
         websiteData,
-        updateWebsiteData
+        initializeWebsite,
+        setCurrentFile,
+        setCurrentPage,
+        addPage
     } = useSiteStore();
+
+    const [previewUrl, setPreviewUrl] = useState<string>("about:blank");
+
+    const currentPageData = websiteData[currentPage] || { html: "", css: "" };
+
+    // this will allow navigation between pages
+    useEffect(() => {
+        if (currentPageData?.html && currentPageData?.css) {
+            const previewContent = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <base href="/" target="_parent">
+                    <style>
+                        ${currentPageData.css}
+                        a { cursor: pointer; }
+                    </style>
+                    <script>
+                        // Intercept link clicks
+                        document.addEventListener("DOMContentLoaded", function() {
+                            document.body.addEventListener("click", function(e) {
+                                // Find the closest anchor element
+                                let target = e.target;
+                                while (target && target.tagName !== "A" && target !== document.body) {
+                                    target = target.parentNode;
+                                }
+                                
+                                if (target && target.tagName === "A") {
+                                    e.preventDefault();
+                                    const href = target.getAttribute("href");
+                                    if (href && href !== "#" && !href.startsWith("http") && !href.startsWith("mailto:")) {
+                                        // Extract page name from URL (remove leading/trailing slashes and .html if present)
+                                        let pageName = href.replace(/^\\/+|\\/+$|\\.html$/g, "") || "home";
+                                        // Send message to parent window
+                                        window.parent.postMessage({ 
+                                            type: "NAVIGATE", 
+                                            page: pageName 
+                                        }, "*");
+                                    }
+                                }
+                            });
+                        });
+                    </script>
+                </head>
+                <body>${currentPageData.html}</body>
+                </html>
+            `;
     
-    const [rightViewMode, setRightViewMode] = useState<"preview" | "code">("preview");
-    const [selectedFile, setSelectedFile] = useState<string>("index.html");
-    // const [websiteData, setWebsiteData] = useState<WebsiteData>({
-    //     html: "<!-- Your generated HTML will appear here -->",
-    //     css: "/* Your generated CSS will appear here */"
-    // });
-    // const [files, setFiles] = useState<FileType[]>([
-    //     {
-    //         name: "public",
-    //         type: "folder",
-    //         children: [
-    //             {
-    //                 name: "index.html",
-    //                 type: "file",
-    //                 content: "<!-- Your generated HTML will appear here -->"
-    //             },
-    //             {
-    //                 name: "styles.css",
-    //                 type: "file",
-    //                 content: "/* Your generated CSS will appear here */"
-    //             },
-    //         ],
-    //     },
-    // ]);
-
-    // const updateWebsiteData = (html: string, css: string) => {
-    //     setWebsiteData({ html, css });
-
-    //     const updatedFiles = [...files];
-    //     const updateFileContent = (files: FileType[] = [], name: string, content: string) => {
-    //         const file = files.find(f => f.name === name);
-    //         if (file) file.content = content;
-    //         return files;
-    //     };
-
-    //     if (updatedFiles[0]?.children) {
-    //         const updatedChildren = updateFileContent(updatedFiles[0].children, 'index.html', html);
-    //         updateFileContent(updatedChildren, 'styles.css', css);
-    //         setFiles(updatedFiles);
-    //     }
-    // };
-
-    const handleFileSelect = (file: FileType) => {
-        if (file.type === 'file') {
-            setCurrentFile(file.name);
+            const blob = new Blob([previewContent], { type: "text/html" });
+            const url = URL.createObjectURL(blob);
+            setPreviewUrl(url);
+    
+            return () => {
+                URL.revokeObjectURL(url);
+            };
         }
-    };
+    }, [currentPageData, currentPage]);
+    
+    // useEffect(() => {
+    //     if (currentPageData?.html && currentPageData?.css) {
+    //         const blob = new Blob([`
+    //             <!DOCTYPE html>
+    //             <html>
+    //             <head>
+    //                 <style>${currentPageData.css}</style>
+    //             </head>
+    //             <body>${currentPageData.html}</body>
+    //             </html>
+    //         `], { type: "text/html" });
+    //         setPreviewUrl(URL.createObjectURL(blob));
+    //     }
+    // }, [currentPageData, currentPage]);
 
-    const getFileContent = (): string => {
-        if (!currentFile) return "";
-
-        const findFile = (items: FileType[] = []): FileType | undefined => {
-            for (const item of items) {
-                if (item.name === currentFile) return item;
-                if (item.children) {
-                    const found = findFile(item.children);
-                    if (found) return found;
+    useEffect(() => {
+        const handleMessage = (event: MessageEvent) => {
+            if (event.data?.type === "NAVIGATE") {
+                const pageName = event.data.page;
+                if (pages.includes(pageName)) {
+                    setCurrentPage(pageName);
+                    setCurrentFile(`${pageName}.html`);
                 }
             }
-            return undefined;
         };
+    
+        window.addEventListener("message", handleMessage);
+        return () => window.removeEventListener("message", handleMessage);
+    }, [pages, setCurrentPage, setCurrentFile]);
 
-        const file = findFile(files);
-        return file?.content || "";
+    const handlePageChange = (page: string) => {
+        setCurrentPage(page);
+        setCurrentFile(`${page.toLowerCase()}.html`);
+    };
+
+    const handleRefresh = () => {
+        if (currentPageData?.html && currentPageData?.css) {
+            const blob = new Blob([`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>${currentPageData.css}</style>
+                </head>
+                <body>${currentPageData.html}</body>
+                </html>
+            `], { type: "text/html" });
+            setPreviewUrl(URL.createObjectURL(blob));
+        }
     };
 
     const handleGenerate = async (prompt: string) => {
@@ -106,33 +149,34 @@ const ProjectWrapper = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ prompt }),
+                body: JSON.stringify({
+                    description: prompt,
+                    style: "modern",
+                    color_scheme: "blue",
+                    generate_multiple_pages: true,
+                }),
             });
             console.log("response", response);
             if (!response.ok) {
-                throw new Error("Failed to generate website");
+                toast.error("Failed to generate website. Please try again");
+                return;
             }
 
             const data = await response.json();
-            console.log("data", data);
-            updateWebsiteData(data.html, data.css);
-            toast.success("Website generated successfully!");
 
+            if (data.pages) {
+                initializeWebsite(data.pages);
+            } else {
+                const pageName = "home";
+                addPage(pageName, data.html || "<div>No content</div>", data.css || "/* No styles */");
+            }
+
+            toast.success("Your website is ready!")
         } catch (error) {
             console.error("Error generating website:", error);
             toast.error("Failed to generate website. Please try again.");
         }
     };
-
-    const previewUrl = `data:text/html,${encodeURIComponent(
-        `<!DOCTYPE html>
-        <html>
-        <head>
-            <style>${websiteData.css}</style>
-        </head>
-        <body>${websiteData.html}</body>
-        </html>`
-    )}`;
 
     return (
         <ProjectPannel
@@ -152,33 +196,16 @@ const ProjectWrapper = () => {
             }
             rightHeader={
                 <RightHeader
-                    viewMode={rightViewMode}
-                    onViewModeChange={setRightViewMode}
+                    currentPage={currentPage}
+                    pages={pages}
+                    onPageChange={handlePageChange}
                     url={previewUrl}
-                    onUrlChange={() => {}}
-                    onRefresh={() => {}}
+                    onUrlChange={(url) => setPreviewUrl(url)}
+                    onRefresh={handleRefresh}
                 />
             }
             rightContent={
-                rightViewMode === "preview" ? (
-                    <Preview url={previewUrl} />
-                ) : (
-                    <div className="flex h-full">
-                        <div className="w-64 border-r border-border overflow-auto">
-                            <FileExplorer
-                                files={files}
-                                onFileSelect={handleFileSelect}
-                                selectedFile={selectedFile}
-                            />
-                        </div>
-                        <div className="flex-1 overflow-auto">
-                            <CodeViewer
-                                content={getFileContent()}
-                                language={selectedFile.endsWith('.css') ? 'css' : 'html'}
-                            />
-                        </div>
-                    </div>
-                )
+                <Preview url={previewUrl} />
             }
         />
     );

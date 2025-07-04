@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 interface PreviewProps {
     url: string;
@@ -11,7 +11,8 @@ export const Preview = ({ url }: PreviewProps) => {
                 src={url}
                 className="w-full h-full border-0"
                 title="Website Preview"
-                sandbox="allow-same-origin allow-scripts"
+                sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-top-navigation"
+                allow="fullscreen"
             />
         </div>
     );

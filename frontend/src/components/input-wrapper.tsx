@@ -17,7 +17,7 @@ interface Props {
 
 const InputWrapper = ({ isPanel, textareaClassName, buttonClassName, onGenerate, isLoading }: Props) => {
 
-    const [prompt, setPrompt] = useState<string>("make a restaurant website very simple 1-2 sections");
+    const [prompt, setPrompt] = useState<string>("");
     const [isFocused, setIsFocused] = useState<boolean>(false);
 
     const handleSubmit = async (e: React.FormEvent) => {

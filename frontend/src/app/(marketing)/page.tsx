@@ -1,6 +1,4 @@
-import InputWrapper from '@/components/input-wrapper';
-import SiteGenerator from '@/components/site-generator';
-import React from 'react'
+import SiteGenerator from "@/components/site-generator";
 
 const HomePage = () => {
     return (
@@ -15,7 +13,7 @@ const HomePage = () => {
                     <h2 className="text-3xl lg:text-5xl font-semibold text-center">
                         Build your website in minutes
                     </h2>
-                    <p className="text-base text-muted-foreground text-balance mt-2">
+                    <p className="text-base text-muted-foreground text-balance mt-4">
                         Site Genie is a website builder that allows you to create a website in minutes
                     </p>
                 </div>

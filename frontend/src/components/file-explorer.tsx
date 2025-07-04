@@ -6,12 +6,12 @@ import { useState } from "react";
 
 export interface FileType {
     name: string;
-    type: 'file' | 'folder';
+    type: "file" | "folder";
     content?: string;
     children?: FileType[];
 }
 
-interface FileItemProps {
+interface ItemProps {
     file: FileType;
     level?: number;
     onSelect: (file: FileType) => void;
@@ -23,7 +23,7 @@ const FileItem = ({
     level = 0,
     onSelect,
     selectedFile,
-}: FileItemProps) => {
+}: ItemProps) => {
     
     console.log(file, selectedFile)
     const isSelected = selectedFile === file.name;
@@ -81,13 +81,13 @@ const FileItem = ({
     );
 };
 
-interface FileExplorerProps {
+interface Props {
     files: FileType[];
     onFileSelect: (file: FileType) => void;
     selectedFile: string;
 }
 
-const FileExplorer = ({ files, onFileSelect, selectedFile }: FileExplorerProps) => {
+const FileExplorer = ({ files, onFileSelect, selectedFile }: Props) => {
     return (
         <div className="h-full overflow-auto p-2">
             {files.map((file) => (

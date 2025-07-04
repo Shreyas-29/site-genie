@@ -1,11 +1,12 @@
+import Link from "next/link";
 import React from "react";
 
 const LeftHeader = () => {
     return (
         <div className="flex items-center justify-between w-full">
-            <h2 className="text-sm font-medium">
-                Project
-            </h2>
+            <Link href="/" className="text-base font-semibold">
+                Site Genie
+            </Link>
         </div>
     );
 };
