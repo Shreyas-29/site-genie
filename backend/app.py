@@ -108,7 +108,7 @@ def generate_website_content(prompt: str, style: str, color_scheme: str, multi_p
             return json.loads(content)
         except json.JSONDecodeError:
             logger.error("Failed to parse AI response as JSON")
-            logger.error(f"Raw response: {response.text}")
+            # logger.error(f"Raw response: {response.text}")
             raise ValueError("Failed to generate valid website content")
             
     except Exception as e:

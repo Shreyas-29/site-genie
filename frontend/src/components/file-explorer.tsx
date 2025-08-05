@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { FileIcon, FolderIcon, ChevronRightIcon, ChevronDownIcon, FileTextIcon } from "lucide-react";
+import { ChevronDownIcon, ChevronRightIcon, FileIcon, FileTextIcon } from "lucide-react";
 import { useState } from "react";
 
 export interface FileType {
@@ -24,13 +24,13 @@ const FileItem = ({
     onSelect,
     selectedFile,
 }: ItemProps) => {
-    
-    console.log(file, selectedFile)
+
     const isSelected = selectedFile === file.name;
 
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
     const handleClick = () => {
+        console.log(file.name.includes("css"));
         if (file.type === "folder") {
             setIsExpanded(!isExpanded);
         } else {
@@ -57,18 +57,22 @@ const FileItem = ({
                         ) : (
                             <ChevronRightIcon className="w-4 h-4 mr-1" />
                         )}
-                        <FolderIcon className="w-4 h-4 mr-2 text-blue-500" />
+                        {/* <FolderIcon className="w-4 h-4 mr-2 text-blue-500" /> */}
                     </>
                 ) : (
-                    <FileIcon className="w-4 h-4 mr-2 text-amber-500" />
+                    file.name.includes("css") ? (
+                        <FileIcon className="w-4 h-4 mr-2 text-sky-500" />
+                    ) : (
+                        <FileTextIcon className="w-4 h-4 mr-2 text-orange-500" />
+                    )
                 )}
                 <span className="text-sm truncate">{file.name}</span>
             </div>
             {file.type === "folder" && isExpanded && file.children && (
                 <div>
-                    {file.children.map((child) => (
+                    {file.children.map((child, index) => (
                         <FileItem
-                            key={child.name}
+                            key={child.name + index}
                             file={child}
                             level={level + 1}
                             onSelect={onSelect}

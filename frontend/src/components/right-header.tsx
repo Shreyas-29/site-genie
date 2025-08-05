@@ -1,10 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { RefreshCw, ExternalLink, ChevronDownIcon } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu";
+import { ChevronDownIcon, RefreshCw } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger } from "./ui/tabs";
 
 type ViewMode = "preview" | "code";
 
@@ -15,6 +16,8 @@ interface Props {
     url: string;
     onUrlChange: (url: string) => void;
     onRefresh: () => void;
+    viewMode: "preview" | "code";
+    onViewModeChange: (mode: "preview" | "code") => void;
 }
 
 const RightHeader = ({
@@ -24,6 +27,8 @@ const RightHeader = ({
     url,
     onUrlChange,
     onRefresh,
+    viewMode,
+    onViewModeChange,
 }: Props) => {
 
     const displayName = currentPage ?
@@ -32,7 +37,21 @@ const RightHeader = ({
 
     return (
         <div className="flex items-center justify-between w-full py-2">
-            <div className="flex items-center">
+            <div className="flex items-center gap-4">
+                <Tabs
+                    value={viewMode}
+                    onValueChange={(value) => onViewModeChange(value as "preview" | "code")}
+                    className="h-full"
+                >
+                    <TabsList className="h-8">
+                        <TabsTrigger value="preview" className="flex items-center gap-1.5 text-xs cursor-pointer">
+                            <span>Preview</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="code" className="flex items-center gap-1.5 text-xs cursor-pointer">
+                            <span>Code</span>
+                        </TabsTrigger>
+                    </TabsList>
+                </Tabs>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button
@@ -72,19 +91,13 @@ const RightHeader = ({
                 </Button>
                 <div className="relative flex items-center w-64">
                     <Input
+                        readOnly
                         value={url}
+                        contentEditable={false}
                         onChange={(e) => onUrlChange(e.target.value)}
                         className="h-8 text-xs pr-8"
                         placeholder="Preview URL"
                     />
-                    <Button
-                        size="sm"
-                        variant="ghost"
-                        className="absolute right-1 rounded-sm size-6 p-0"
-                        onClick={() => window.open(url, "_blank")}
-                    >
-                        <ExternalLink className="size-3.5" />
-                    </Button>
                 </div>
             </div>
         </div>

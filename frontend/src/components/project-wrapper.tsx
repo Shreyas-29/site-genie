@@ -1,15 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import ProjectPannel from "./project-pannel";
-import LeftHeader from "./left-header";
+import { useSiteStore } from "@/hooks/use-site";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import CodeViewer from "./code-viewer";
 import FileExplorer from "./file-explorer";
 import InputWrapper from "./input-wrapper";
-import RightHeader from "./right-header";
+import LeftHeader from "./left-header";
 import Preview from "./preview";
-import CodeViewer from "./code-reviewer";
-import { toast } from "sonner";
-import { useSiteStore } from "@/hooks/use-site";
+import ProjectPannel from "./project-pannel";
+import RightHeader from "./right-header";
 
 interface WebsiteData {
     html: string;
@@ -32,14 +32,17 @@ const ProjectWrapper = () => {
         initializeWebsite,
         setCurrentFile,
         setCurrentPage,
-        addPage
+        addPage,
+        updateWebsiteData,
+        currentFile,
+        files,
     } = useSiteStore();
 
+    const [rightViewMode, setRightViewMode] = useState<"preview" | "code">("preview");
     const [previewUrl, setPreviewUrl] = useState<string>("about:blank");
 
     const currentPageData = websiteData[currentPage] || { html: "", css: "" };
 
-    // this will allow navigation between pages
     useEffect(() => {
         if (currentPageData?.html && currentPageData?.css) {
             const previewContent = `
@@ -81,31 +84,16 @@ const ProjectWrapper = () => {
                 <body>${currentPageData.html}</body>
                 </html>
             `;
-    
+
             const blob = new Blob([previewContent], { type: "text/html" });
             const url = URL.createObjectURL(blob);
             setPreviewUrl(url);
-    
+
             return () => {
                 URL.revokeObjectURL(url);
             };
         }
     }, [currentPageData, currentPage]);
-    
-    // useEffect(() => {
-    //     if (currentPageData?.html && currentPageData?.css) {
-    //         const blob = new Blob([`
-    //             <!DOCTYPE html>
-    //             <html>
-    //             <head>
-    //                 <style>${currentPageData.css}</style>
-    //             </head>
-    //             <body>${currentPageData.html}</body>
-    //             </html>
-    //         `], { type: "text/html" });
-    //         setPreviewUrl(URL.createObjectURL(blob));
-    //     }
-    // }, [currentPageData, currentPage]);
 
     useEffect(() => {
         const handleMessage = (event: MessageEvent) => {
@@ -117,7 +105,7 @@ const ProjectWrapper = () => {
                 }
             }
         };
-    
+
         window.addEventListener("message", handleMessage);
         return () => window.removeEventListener("message", handleMessage);
     }, [pages, setCurrentPage, setCurrentFile]);
@@ -140,6 +128,30 @@ const ProjectWrapper = () => {
             `], { type: "text/html" });
             setPreviewUrl(URL.createObjectURL(blob));
         }
+    };
+
+    const handleFileSelect = (file: FileType) => {
+        if (file.type === 'file') {
+            setCurrentFile(file.name);
+        }
+    };
+
+    const getFileContent = (): string => {
+        if (!currentFile) return "";
+
+        const findFile = (items: FileType[] = []): FileType | undefined => {
+            for (const item of items) {
+                if (item.name === currentFile) return item;
+                if (item.children) {
+                    const found = findFile(item.children);
+                    if (found) return found;
+                }
+            }
+            return undefined;
+        };
+
+        const file = findFile(files);
+        return file?.content || "";
     };
 
     const handleGenerate = async (prompt: string) => {
@@ -202,10 +214,33 @@ const ProjectWrapper = () => {
                     url={previewUrl}
                     onUrlChange={(url) => setPreviewUrl(url)}
                     onRefresh={handleRefresh}
+                    viewMode={rightViewMode}
+                    onViewModeChange={setRightViewMode}
                 />
             }
+            // rightContent={
+            //     <Preview url={previewUrl} />
+            // }
             rightContent={
-                <Preview url={previewUrl} />
+                rightViewMode === "preview" ? (
+                    <Preview url={previewUrl} />
+                ) : (
+                    <div className="flex h-full">
+                        <div className="w-64 border-r border-border overflow-auto">
+                            <FileExplorer
+                                files={files}
+                                onFileSelect={handleFileSelect}
+                                selectedFile={currentFile!}
+                            />
+                        </div>
+                        <div className="flex-1 overflow-auto">
+                            <CodeViewer
+                                content={getFileContent()}
+                                language={currentFile?.endsWith('.css') ? 'css' : 'html'}
+                            />
+                        </div>
+                    </div>
+                )
             }
         />
     );

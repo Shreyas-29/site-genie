@@ -1,6 +1,4 @@
-import { cn } from "@/lib/utils";
 import Link from "next/link";
-import React from "react";
 import { Button } from "./ui/button";
 
 const Navbar = () => {
@@ -16,8 +14,8 @@ const Navbar = () => {
                 </div>
                 <div className="items-center flex gap-2 lg:gap-4">
                     <Button size="sm" className="hidden sm:flex">
-                        <Link href="/app">
-                            Dashboard
+                        <Link href="/project">
+                            Project
                         </Link>
                     </Button>
                 </div>
