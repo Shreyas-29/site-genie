@@ -1,6 +1,7 @@
 # SiteGenie - Frontend
 
 A website builder that allows you to create a website in minutes
+<img width="1280" height="720" alt="Site Genie Thumbnail" src="https://github.com/user-attachments/assets/d2e26583-dc12-44ca-82d8-3c98c1e111ff" />
 
 
 ## 🛠️ Tech Stack
@@ -56,5 +57,31 @@ Create a .env file:
 ```env
 GEMINI_API_KEY=your_gemini_api_key
 ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+```
+
+### Upgrade pip
+```
+pip install --upgrade pip
+```
+
+### Install wheel first
+```
+pip install wheel
+```
+
+### Now install the requirements
+```
+pip install -r requirements.txt
+```
+
+
+### Create new virtual environment
+```
+python3 -m venv venv
+```
+
+### Activate virtual environment
+```
+source venv/bin/activate
 ```
 
