@@ -1,6 +1,8 @@
-# SiteGenie - Frontend
+# SiteGenie - AI Website Builder v1
 
 A website builder that allows you to create a website in minutes
+
+
 <img width="1280" height="720" alt="Site Genie Thumbnail" src="https://github.com/user-attachments/assets/d2e26583-dc12-44ca-82d8-3c98c1e111ff" />
 
 
